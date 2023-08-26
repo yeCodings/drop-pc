@@ -18,7 +18,7 @@ import styles from './index.module.less';
 export default () => (
   <div className={styles.container}>
     <LoginFormPage
-      backgroundImageUrl="https://gw.alipayobjects.com/zos/rmsportal/FfdJeJRQWjEeGTpqgBKj.png"
+      backgroundImageUrl="http://drop-server-assets.oss-cn-shanghai.aliyuncs.com/images/1693009987013.jpeg"
       logo="http://drop-server-assets.oss-cn-shanghai.aliyuncs.com/images/1692974748988.jpg"
     >
       <div><h2 className={styles.title}>绝命码师管理系统</h2></div>
