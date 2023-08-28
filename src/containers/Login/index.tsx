@@ -1,5 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
-/* eslint-disable import/no-extraneous-dependencies */
 import {
   LockOutlined,
   MobileOutlined,
@@ -11,26 +9,18 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import {
-  Tabs, message,
+  Tabs, TabsProps, message,
 } from 'antd';
 import { useMutation } from '@apollo/client';
 import styles from './index.module.less';
 import { LOGIN, SEND_CODE_MSG } from '../../graphql/auth';
-
-// const items: TabsProps['items'] = [
-//   {
-//     key: 'phone',
-//     label: '手机号登录',
-//     children: 'Content of Tab Pane 1',
-//   },
-// ];
 
 interface IValue {
   tel:string;
   code: string;
 }
 
-export default () => {
+export const Login = () => {
   const [run] = useMutation(SEND_CODE_MSG);
   const [login] = useMutation(LOGIN);
 
@@ -38,13 +28,20 @@ export default () => {
     const res = await login({
       variables: values,
     });
-    if (res.data.login) {
-      message.success('登录成功');
+    if (res.data.login.code === 200) {
+      message.success(res.data.login.message);
       return;
     }
-    message.error('登录失败');
-    console.log('🚀 ~ file: index.tsx:41 ~ loginHandler ~ res:', res);
+    message.error(res.data.login.message);
   };
+
+  const items: TabsProps['items'] = [
+    {
+      key: '1',
+      label: '手机号登录',
+    },
+  ];
+
   return (
     <div className={styles.container}>
       <LoginFormPage
@@ -53,8 +50,9 @@ export default () => {
         logo="http://drop-server-assets.oss-cn-shanghai.aliyuncs.com/images/1692974748988.jpg"
       >
         <div><h2 className={styles.title}>绝命码师管理系统</h2></div>
-        <Tabs centered>
-          <Tabs.TabPane key="phone" tab="手机号登录" />
+        <Tabs centered items={items}>
+          {/* TabPane 即将废弃 使用items */}
+          {/* <Tabs.TabPane key="phone" tab="手机号登录" /> */}
         </Tabs>
         <>
           <ProFormText
@@ -104,10 +102,10 @@ export default () => {
                   tel,
                 },
               });
-              if (res.data.sendCodeMsg) {
-                message.success('获取验证码成功');
+              if (res.data.sendCodeMsg === 200) {
+                message.success(res.data.login.message);
               } else {
-                message.error('获取验证码失败');
+                message.error(res.data.login.message);
               }
             }}
           />
