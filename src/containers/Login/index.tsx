@@ -12,10 +12,12 @@ import {
   Tabs, TabsProps, message,
 } from 'antd';
 import { useMutation } from '@apollo/client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { AUTH_TOKEN } from '@/utils/constants';
+import { LOGIN, SEND_CODE_MSG } from '@/graphql/auth';
+import { useUserContext } from '@/hooks/userHooks';
+import { useTitle } from '@/hooks';
 import styles from './index.module.less';
-import { LOGIN, SEND_CODE_MSG } from '../../graphql/auth';
-import { AUTH_TOKEN } from '../../utils/constants';
 
 interface IValue {
   tel:string;
@@ -27,6 +29,9 @@ export const Login = () => {
   const [run] = useMutation(SEND_CODE_MSG);
   const [login] = useMutation(LOGIN);
   const nav = useNavigate();
+  const { store } = useUserContext();
+  const [params] = useSearchParams();
+  useTitle('登录');
 
   const loginHandler = async (values: IValue) => {
     const res = await login({
@@ -34,10 +39,15 @@ export const Login = () => {
     });
     if (res.data.login.code === 200) {
       if (values.autoLogin) {
+        sessionStorage.setItem(AUTH_TOKEN, '');
         localStorage.setItem(AUTH_TOKEN, res.data.login.data);
+      } else {
+        localStorage.setItem(AUTH_TOKEN, '');
+        sessionStorage.setItem(AUTH_TOKEN, res.data.login.data);
       }
+
       message.success(res.data.login.message);
-      nav('/');
+      nav(params.get('orgUrl') || '/');
       return;
     }
     message.error(res.data.login.message);
@@ -70,6 +80,7 @@ export const Login = () => {
             }}
             name="tel"
             placeholder="手机号"
+            initialValue={store.tel}
             rules={[
               {
                 required: true,
