@@ -38,6 +38,8 @@ export const Login = () => {
       variables: values,
     });
     if (res.data.login.code === 200) {
+      // 登录成功后，刷新页面获取最新的状态
+      store.refetchHandler();
       if (values.autoLogin) {
         sessionStorage.setItem(AUTH_TOKEN, '');
         localStorage.setItem(AUTH_TOKEN, res.data.login.data);
