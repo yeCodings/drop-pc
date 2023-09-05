@@ -2,11 +2,12 @@ import ReactDOM from 'react-dom/client';
 import { ApolloProvider } from '@apollo/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { client } from '@/utils/apollo';
-import { ROUTE_CONFIG } from '@/routes';
+import { routes } from '@/routes/menus';
 import UserInfo from '@/components/UserInfo';
 import Layout from './components/Layout';
-import '@/index.css';
 import { Login } from './containers/Login';
+import { ROUTER_COMPONENT } from './routes';
+import '@/index.css';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <ApolloProvider client={client}>
@@ -15,13 +16,16 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Layout />}>
-            {ROUTE_CONFIG.map((item) => (
-              <Route
-                key={item.key}
-                path={item.path}
-                element={<item.element />}
-              />
-            ))}
+            {routes.map((item) => {
+              const Component = ROUTER_COMPONENT[item.key];
+              return (
+                <Route
+                  key={item.path}
+                  path={item.path}
+                  element={<Component />}
+                />
+              );
+            })}
           </Route>
         </Routes>
       </UserInfo>
